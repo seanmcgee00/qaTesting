@@ -1,5 +1,7 @@
 package testingweek;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
 
@@ -28,6 +30,7 @@ public class TheDemositeTest {
 	private WebDriver webDriver;
 	private static final String BASE_URL="http://thedemosite.co.uk/";
     private static ExtentReports report;
+    private String dataFileName="testingData.xlsx";
     
     
     @BeforeClass 
@@ -53,17 +56,21 @@ public class TheDemositeTest {
 	@Test
 	public void loginTest() {
 	String success="";
+	
 	 ExtentTest test = report.createTest("MyFirstTest"); 
-
+	 
 	 test.log(Status.INFO, "My First Test is Starting Happy Path "); 
-
+	  SpreadSheetReader sheetReader = new SpreadSheetReader(System.getProperty("user.dir") + File.separatorChar +dataFileName);
+	  List<String> row = sheetReader.readRow(1, "DATA_INPUT");
+	  
+	
 	
 		DemositeHomePage homePage = PageFactory.initElements(webDriver, DemositeHomePage.class);
 		homePage.clickAddUserPage();
 		
 		DemositeAddUserPage userPage = PageFactory.initElements(webDriver, DemositeAddUserPage.class);
-		userPage.addUserName("Sean");
-		userPage.addPassword("Password33");
+		userPage.addUserName(row.get(2));
+		userPage.addPassword(row.get(3));
 		test.log(Status.DEBUG,"User Name on add user="+userPage.getUserName());
 		test.log(Status.DEBUG,"Password on add user="+userPage.getPassword());
 		System.out.println("The password is "+userPage.getPassword());
@@ -72,8 +79,8 @@ public class TheDemositeTest {
 		userPage.clickPage();
 		
 		DemoSiteLoginPage loginPage = PageFactory.initElements(webDriver, DemoSiteLoginPage.class);
-		loginPage.addLoginUserName("Sean");
-		loginPage.addLoginPassword("Password33");
+		loginPage.addLoginUserName(row.get(4));
+		loginPage.addLoginPassword(row.get(5));
 		test.log(Status.DEBUG,"User Name on Login="+loginPage.getUserName());
 		test.log(Status.DEBUG,"Password on Login="+loginPage.getPassword());
 		
@@ -81,7 +88,8 @@ public class TheDemositeTest {
 		loginPage.clickLogin();
 
 		success=loginPage.getResult();
-		Assert.assertTrue("Successful test", success.equals("**Successful Login**"));
+		 List<String> results = sheetReader.readRow(1, "EXPECTED_RESULT");
+		Assert.assertTrue("Successful test", success.equals(results.get(1)));
 		 test.pass(success);
 	
 		
@@ -94,13 +102,15 @@ public class TheDemositeTest {
 	ExtentTest test = report.createTest("MySecondTest"); 
 
 	 test.log(Status.INFO, "My Second Test is Starting SAD Path "); 
+	 SpreadSheetReader sheetReader = new SpreadSheetReader(System.getProperty("user.dir") + File.separatorChar +dataFileName);
+	  List<String> row = sheetReader.readRow(2, "DATA_INPUT");
 		
 		DemositeHomePage homePage = PageFactory.initElements(webDriver, DemositeHomePage.class);
 		homePage.clickAddUserPage();
 		
 		DemositeAddUserPage userPage = PageFactory.initElements(webDriver, DemositeAddUserPage.class);
-		userPage.addUserName("SeanMcgee");
-		userPage.addPassword("Password2");
+		userPage.addUserName(row.get(2));
+		userPage.addPassword(row.get(3));
 		test.log(Status.DEBUG,"User Name on add user="+userPage.getUserName());
 		test.log(Status.DEBUG,"Password on add user="+userPage.getPassword());
 		System.out.println("The password is "+userPage.getPassword());
@@ -110,8 +120,8 @@ public class TheDemositeTest {
 
 		
 		DemoSiteLoginPage loginPage = PageFactory.initElements(webDriver, DemoSiteLoginPage.class);
-		loginPage.addLoginUserName("Sean");
-		loginPage.addLoginPassword("Passwordwwhdgf");
+		loginPage.addLoginUserName(row.get(4));
+		loginPage.addLoginPassword(row.get(5));
 		test.log(Status.DEBUG,"User Name on Login="+loginPage.getUserName());
 		test.log(Status.DEBUG,"Password on Login="+loginPage.getPassword());
 		
@@ -120,7 +130,8 @@ public class TheDemositeTest {
 		success=loginPage.getResult();
 
 	    try{ 
-	    	Assert.assertTrue("Unsuccessful test", success.equals("**Successful Login**")); 
+	    	 List<String> results = sheetReader.readRow(1, "EXPECTED_RESULT");
+	 		Assert.assertTrue("Unsuccessful test", success.equals(results.get(1)));
 	    	 test.pass("Passed"); 
 	    	}
 	    catch (AssertionError e) { 
