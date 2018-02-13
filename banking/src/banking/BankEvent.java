@@ -237,7 +237,7 @@ public void withdraw(TextField amount){
 		    	 
 		    	 System.out.println("New Balance:"+newBalance);
 		    	 sql="insert into transactionlog(actionTaken,accountNo,amount) values('W','"+myAccount+"',"+amountDouble+")";
-			     System.out.println("the deposit sql is "+sql);
+			     System.out.println("the withdraw sql is "+sql);
 			     stmt.executeUpdate(sql);
 			     JOptionPane.showMessageDialog(currentFrame,"€"+amountDouble+" has been Withdrawn from Account No:"+myAccount.toUpperCase()+". Your new balance is €"+newBalance);
 			    
@@ -322,7 +322,8 @@ public String transactionPanel(){
 		 this.genderFelid.setText("");
 		 this.accountTypeFeild.setText("");
 		 this.currentBalance.setText("");
-		 this.amount.setText("");
+		
+	if(this.amount  !=null)  this.amount.setText("");
 	if (this.accountType != null)	 this.accountType.clearSelection();
 	if (this.gender != null)	 this.gender.clearSelection();	
 	}

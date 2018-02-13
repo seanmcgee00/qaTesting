@@ -80,6 +80,7 @@ public class MainClass {
 		Label amountLabel = new Label("Amoumt");
 		TextField amount= new TextField(7);
 		Button depositButton= new Button();
+		Button withdrawButton= new Button();
 		tPanel.add(amountLabel);
 		tPanel.add(amount);
 		
@@ -144,6 +145,7 @@ public class MainClass {
 				
 				JFrame depositFrame= new JFrame("Deposit");
 				accInfoPanel.add(tPanel);
+				accInfoPanel.remove(withdrawButton);
 				accInfoPanel.add(depositButton);
 				depositFrame.add(accNoPanel,BorderLayout.NORTH);
 				depositFrame.add(detailsPanel,BorderLayout.CENTER);
@@ -160,7 +162,12 @@ public class MainClass {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						// TODO Auto-generated method stub
-						getAcc.deposit(amount);
+						if(depositFrame.getTitle().equals("Deposit"))
+						{
+							getAcc.deposit(amount);
+						}
+						
+						
 					}});
 				
 			}
@@ -175,7 +182,9 @@ public class MainClass {
 				
 				JFrame depositFrame= new JFrame("Withdrawl");
 				accInfoPanel.add(tPanel);
-				accInfoPanel.add(depositButton);
+				accInfoPanel.remove(depositButton);
+				accInfoPanel.add(withdrawButton);
+				
 				depositFrame.add(accNoPanel,BorderLayout.NORTH);
 				depositFrame.add(detailsPanel,BorderLayout.CENTER);
 				depositFrame.add(accInfoPanel,BorderLayout.SOUTH);
@@ -185,13 +194,17 @@ public class MainClass {
 				BankEvent getAcc= new BankEvent(accNo,genderFelid,typeFeild,name,address,currentBalance,depositFrame);
 				
 				getDetails.addActionListener(getAcc);
-				depositButton.setLabel("Withdraw");
-				depositButton.addActionListener( new ActionListener(){
+				withdrawButton.setLabel("Withdraw");
+				withdrawButton.addActionListener( new ActionListener(){
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						// TODO Auto-generated method stub
-						getAcc.withdraw(amount);
+						if(depositFrame.getTitle().equals("Withdrawl"))
+						{
+							getAcc.withdraw(amount);
+						}
+						
 					}});
 				
 			}
@@ -204,6 +217,9 @@ public class MainClass {
 				
 				
 				JFrame detailsFrame= new JFrame("Details");
+				accInfoPanel.remove(tPanel);
+				accInfoPanel.remove(withdrawButton);
+				accInfoPanel.remove(depositButton);
 				JTextArea transDetails= new JTextArea(5,50);
 				transDetails.setEditable(false);
 				transDetails.append("Transaction History \n");
