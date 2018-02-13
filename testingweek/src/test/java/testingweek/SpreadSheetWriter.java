@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SpreadSheetReader {
+public class SpreadSheetWriter {
 
     private Workbook workbook;
 
-    public SpreadSheetReader(String fileName){
+    public SpreadSheetWriter(String fileName){
         FileInputStream excelFile = null;
         try {
             excelFile = new FileInputStream(new File(fileName));

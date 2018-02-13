@@ -54,17 +54,20 @@ public class TheDemositeTest {
 	
 	
 	@Test
-	public void loginTest() {
+	public void loginTest()throws IOException {
 	String success="";
 	
 	 ExtentTest test = report.createTest("MyFirstTest"); 
 	 
-	 test.log(Status.INFO, "My First Test is Starting Happy Path "); 
+	 test.log(Status.INFO, "My First Test is Starting  "); 
 	  SpreadSheetReader sheetReader = new SpreadSheetReader(System.getProperty("user.dir") + File.separatorChar +dataFileName);
-	  List<String> row = sheetReader.readRow(1, "DATA_INPUT");
-	  
-	
-	
+	 test.log(Status.INFO, "The Number of row  in the excel Sheet is "+sheetReader.rownums("DATA_INPUT")); 
+	 
+	 
+	 for(int i=1; i<sheetReader.rownums("DATA_INPUT");i++) {
+		
+	 	List<String> row = sheetReader.readRow(i, "DATA_INPUT");
+	 	test.log(Status.INFO,row.get(0)+" "+row.get(1) );
 		DemositeHomePage homePage = PageFactory.initElements(webDriver, DemositeHomePage.class);
 		homePage.clickAddUserPage();
 		
@@ -86,14 +89,33 @@ public class TheDemositeTest {
 		
 		
 		loginPage.clickLogin();
-
+		
 		success=loginPage.getResult();
-		 List<String> results = sheetReader.readRow(1, "EXPECTED_RESULT");
-		Assert.assertTrue("Successful test", success.equals(results.get(1)));
-		 test.pass(success);
-	
+		
+		 
+		 try{ 
+	    	 List<String> results = sheetReader.readRow(1, "EXPECTED_RESULT");
+	 		Assert.assertTrue("Unsuccessful test", success.equals(results.get(1)));
+	    	 test.pass("Passed"); 
+	    	}
+	    catch (AssertionError e) { 
+	    	  String details = "SAD Path!!! Failing test: " + e.getMessage(); 
+	    	  test.fail(details); 
+	    	  String imagePath = ScreenShot.take(webDriver, "image");  
+	    	  test.addScreenCaptureFromPath(imagePath); 
+  
+	    	           
+	    	         } 
+		 finally {
+			 test.pass("Test Complete"); 
+		 }
+	 }
+
 		
 	}
+	
+		
+	
 	
 	
 	@Test
