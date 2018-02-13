@@ -1,17 +1,44 @@
 package testingweek;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
+
+
+import com.aventstack.extentreports.ExtentReports; 
+import com.aventstack.extentreports.ExtentTest; 
+import com.aventstack.extentreports.Status; 
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter; 
+
+
+
 public class TheDemositeTest {
 	
 	private WebDriver webDriver;
 	private static final String BASE_URL="http://thedemosite.co.uk/";
+    private static ExtentReports report;
+    
+    
+    @BeforeClass 
+    public static void init() { 
+        report = new ExtentReports(); 
+         String fileName = "MyReport" + ".html"; 
+       String filePath = System.getProperty("user.dir") 
+                + File.separatorChar + fileName; 
+        report.attachReporter(new ExtentHtmlReporter(filePath)); 
+    } 
+
 	
 	
 	@Before
@@ -26,76 +53,101 @@ public class TheDemositeTest {
 	@Test
 	public void loginTest() {
 	String success="";
+	 ExtentTest test = report.createTest("MyFirstTest"); 
+
+	 test.log(Status.INFO, "My First Test is Starting Happy Path "); 
+
 	
+		DemositeHomePage homePage = PageFactory.initElements(webDriver, DemositeHomePage.class);
+		homePage.clickAddUserPage();
 		
-		WebElement selectAddUser= webDriver.findElement(By.cssSelector("body > div > center > table > tbody > tr:nth-child(2) > td > div > center > table > tbody > tr > td:nth-child(2) > p > small > a:nth-child(6)"));
-		selectAddUser.click();
-		WebElement enterAddUser= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > div > center > table > tbody > tr:nth-child(1) > td:nth-child(2) > p > input"));
-		enterAddUser.sendKeys("Sean");
-		WebElement enterAddPassword= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > div > center > table > tbody > tr:nth-child(2) > td:nth-child(2) > p > input[type=\"password\"]"));
-		enterAddPassword.sendKeys("mypassword");
+		DemositeAddUserPage userPage = PageFactory.initElements(webDriver, DemositeAddUserPage.class);
+		userPage.addUserName("Sean");
+		userPage.addPassword("Password33");
+		test.log(Status.DEBUG,"User Name on add user="+userPage.getUserName());
+		test.log(Status.DEBUG,"Password on add user="+userPage.getPassword());
+		System.out.println("The password is "+userPage.getPassword());
 		
-		WebElement selectSave= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > div > center > table > tbody > tr:nth-child(3) > td:nth-child(2) > p > input[type=\"button\"]"));
-		selectSave.click();
+		userPage.clickSave();
+		userPage.clickPage();
 		
-		WebElement seletLogin= webDriver.findElement(By.cssSelector("body > div > center > table > tbody > tr:nth-child(2) > td > div > center > table > tbody > tr > td:nth-child(2) > p > small > a:nth-child(7)"));
-		seletLogin.click();
+		DemoSiteLoginPage loginPage = PageFactory.initElements(webDriver, DemoSiteLoginPage.class);
+		loginPage.addLoginUserName("Sean");
+		loginPage.addLoginPassword("Password33");
+		test.log(Status.DEBUG,"User Name on Login="+loginPage.getUserName());
+		test.log(Status.DEBUG,"Password on Login="+loginPage.getPassword());
 		
-		WebElement loginUser= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > p > input"));
-		loginUser.sendKeys("Sean");
-		WebElement loginPassword= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > p > input[type=\"password\"]"));
-		loginPassword.sendKeys("mypassword");
-		WebElement  selectTestLogin= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(2) > p > input[type=\"button\"]"));
 		
-		selectTestLogin.click();
-		
-		WebElement getSuccess= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > big > blockquote > blockquote > font > center > b"));
-		success=getSuccess.getText();
+		loginPage.clickLogin();
+
+		success=loginPage.getResult();
 		Assert.assertTrue("Successful test", success.equals("**Successful Login**"));
-		
+		 test.pass(success);
+	
 		
 	}
 	
-	@Test
-	public void loginTestFail() {
-	String success="";
 	
+	@Test
+	public void loginTestFail() throws IOException {
+	String success="";
+	ExtentTest test = report.createTest("MySecondTest"); 
+
+	 test.log(Status.INFO, "My Second Test is Starting SAD Path "); 
 		
-		WebElement selectAddUser= webDriver.findElement(By.cssSelector("body > div > center > table > tbody > tr:nth-child(2) > td > div > center > table > tbody > tr > td:nth-child(2) > p > small > a:nth-child(6)"));
-		selectAddUser.click();
-		WebElement enterAddUser= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > div > center > table > tbody > tr:nth-child(1) > td:nth-child(2) > p > input"));
-		enterAddUser.sendKeys("Sean");
-		WebElement enterAddPassword= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > div > center > table > tbody > tr:nth-child(2) > td:nth-child(2) > p > input[type=\"password\"]"));
-		enterAddPassword.sendKeys("mypassword");
+		DemositeHomePage homePage = PageFactory.initElements(webDriver, DemositeHomePage.class);
+		homePage.clickAddUserPage();
 		
-		WebElement selectSave= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > div > center > table > tbody > tr:nth-child(3) > td:nth-child(2) > p > input[type=\"button\"]"));
-		selectSave.click();
+		DemositeAddUserPage userPage = PageFactory.initElements(webDriver, DemositeAddUserPage.class);
+		userPage.addUserName("SeanMcgee");
+		userPage.addPassword("Password2");
+		test.log(Status.DEBUG,"User Name on add user="+userPage.getUserName());
+		test.log(Status.DEBUG,"Password on add user="+userPage.getPassword());
+		System.out.println("The password is "+userPage.getPassword());
 		
-		WebElement seletLogin= webDriver.findElement(By.cssSelector("body > div > center > table > tbody > tr:nth-child(2) > td > div > center > table > tbody > tr > td:nth-child(2) > p > small > a:nth-child(7)"));
-		seletLogin.click();
+		userPage.clickSave();
+		userPage.clickPage();
+
 		
-		WebElement loginUser= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > p > input"));
-		loginUser.sendKeys("Sean");
-		WebElement loginPassword= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > p > input[type=\"password\"]"));
-		loginPassword.sendKeys("mypaword3");
-		WebElement  selectTestLogin= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > form > div > center > table > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(2) > p > input[type=\"button\"]"));
+		DemoSiteLoginPage loginPage = PageFactory.initElements(webDriver, DemoSiteLoginPage.class);
+		loginPage.addLoginUserName("Sean");
+		loginPage.addLoginPassword("Passwordwwhdgf");
+		test.log(Status.DEBUG,"User Name on Login="+loginPage.getUserName());
+		test.log(Status.DEBUG,"Password on Login="+loginPage.getPassword());
 		
-		selectTestLogin.click();
 		
-		WebElement getSuccess= webDriver.findElement(By.cssSelector("body > table > tbody > tr > td.auto-style1 > big > blockquote > blockquote > font > center > b"));
-		success=getSuccess.getText();
-		Assert.assertTrue("Unsuccessful test", success.equals("**Successful Login**"));
-		
+		loginPage.clickLogin();
+		success=loginPage.getResult();
+
+	    try{ 
+	    	Assert.assertTrue("Unsuccessful test", success.equals("**Successful Login**")); 
+	    	 test.pass("Passed"); 
+	    	}
+	    catch (AssertionError e) { 
+	    	  String details = "SAD Path!!! Failing test: " + e.getMessage(); 
+	    	  test.fail(details); 
+	    	  String imagePath = ScreenShot.take(webDriver, "image");  
+	    	  test.addScreenCaptureFromPath(imagePath); 
+  
+	    	            throw e; 
+	    	         } 
+
 		
 	}
 	
 
 	@After
-	public void cleanUp() {
+	public void tearDown() {
 	//	System.out.println("AFTER method");
 	webDriver.quit();
 		
 	}
+	
+	   @AfterClass 
+	public static void cleanUp() { 
+	report.flush(); 
+	} 
+
 	
 	
 	
